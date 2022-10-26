@@ -17,12 +17,8 @@ class CartItem(models.Model):
     quality = models.IntegerField()
     is_active = models.BooleanField(default=True)
 
-    class Meta:
-        verbose_name = 'Cart Item'
-        verbose_name_plural = 'Cart Items'
-
     def __str__(self):
-        return self.product
+        return self.product.product_name
 
     def sub_total(self):
         return self.product.price * self.quality

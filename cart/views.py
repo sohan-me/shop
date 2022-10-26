@@ -47,7 +47,7 @@ def remove_from_cart(request, product_id):
         cart_item.quality -= 1
         cart_item.save()
     else:
-        cart.delete()
+        cart_item.delete()
 
     return redirect('cart:cart')
 
@@ -88,4 +88,5 @@ def cart(request):
         'tax': tax,
         'grand_total': grand_total,
     }
+
     return render(request, 'cart/cart.html', context)

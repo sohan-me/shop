@@ -6,8 +6,16 @@
 <section class="section-content padding-y bg">
 <div class="container">
 
-<!-- ============================ COMPONENT 1 ================================= -->
+	{% if not cart_items %}
+		<h3 class="text-center"> Your shopping cart is empty </h3>
+		<br>
+		<div class="text-center">  
+			<a href="{% url 'store:store' %}" class="btn btn-primary">Continue shopping</a>
+		</div> 
+	{% else %}
 
+
+<!-- ============================ COMPONENT 1 ================================= -->
 <div class="row">
 	<aside class="col-lg-9">
 <div class="card">
@@ -23,12 +31,13 @@
 <tbody>
 
 	{% for cart_item in cart_items %}
+
 <tr>
 	<td>
 		<figure class="itemside align-items-center">
 			<div class="aside"><img src="{{cart_item.product.images.url}}" class="img-sm"></div>
 			<figcaption class="info">
-				<a href="#" class="title text-dark">{{cart_item.product.product_name}}</a>
+				<a href="{{ cart_item.product.get_url }}" class="title text-dark">{{cart_item.product.product_name}}</a>
 				<p class="text-muted small">Matrix: 25 Mpx <br> Type: {{cart_item.product.category.category_name}}</p>
 			</figcaption>
 		</figure>
@@ -59,7 +68,6 @@
 	</td>
 
 </tr>
-
 {% endfor %}
 </tbody>
 </table>
@@ -87,7 +95,7 @@
 				<img src="{% static './images/misc/payments.png' %}" height="26">
 			</p>
 			<a href="./place-order.html" class="btn btn-primary btn-block"> Checkout </a>
-			<a href="./store.html" class="btn btn-light btn-block">Continue Shopping</a>
+			<a href="{% url 'store:store' %}" class="btn btn-light btn-block">Continue Shopping</a>
 		</div> <!-- card-body.// -->
 		</div> <!-- card.// -->
 
@@ -96,8 +104,9 @@
 
 </div> <!-- row.// -->
 <!-- ============================ COMPONENT 1 END .// ================================= -->
-
+{% endif %}
 </div> <!-- container .//  -->
+
 </section>
 <!-- ========================= SECTION CONTENT END// ========================= -->
 

@@ -4,6 +4,6 @@ from store.models import Product
 
 
 def home(request):
-    product = Product.objects.all().filter(is_available=True)
+    product = Product.objects.filter(is_available=True)
     context = {'products': product}
     return render(request, 'home.html', context)
