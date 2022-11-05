@@ -18,8 +18,10 @@ def register(request):
 			user = Account.objects.create_user(email=email, password=password, first_name=first_name, last_name=last_name, phone_number=phone_number, username=username)
 			user.phone_number = phone_number
 			user.save()
+	else:
+		form = RegistrationForm()
 
-	form = RegistrationForm()
+		
 	context = {
 		'form':form
 	}
