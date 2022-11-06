@@ -1,6 +1,7 @@
 from django.shortcuts import render, redirect, get_object_or_404, HttpResponse
 from store.models import Product, Variation
 from cart.models import Cart, CartItem
+from django.contrib import messages
 # Create your views here.!
 
 
@@ -52,6 +53,7 @@ def add_to_cart(request, product_id):
             cart_item = CartItem.objects.get(product=product, id=cart_item_id)
             cart_item.quality += 1
             cart_item.save()
+            messages.success(request, 'Product Quantity Updated.')
         
         else:
             cart_item = CartItem.objects.create(product=product, cart=cart, quality=1)
@@ -60,11 +62,14 @@ def add_to_cart(request, product_id):
             else:
                 pass
             cart_item.save()
+            messages.success(request, f'{product.product_name} Added to Cart.')
     else:
         cart_item = CartItem.objects.create(product=product, cart=cart, quality=1)
         if len(product_variation) > 0:
             cart_item.product_variation.add(*product_variation)
         cart_item.save()
+        messages.success(request, f'{product.product_name} Added to Cart.')
+        
 
     return redirect('cart:cart')
 
@@ -80,8 +85,10 @@ def remove_from_cart(request, product_id, cart_item_id):
         if cart_item.quality > 1:
             cart_item.quality -= 1
             cart_item.save()
+            messages.success(request, 'Product Quantity Updated.')
         else:
             cart_item.delete()
+            messages.success(request, f'{product.product_name} has beem removed.')
     except:
         pass
 
@@ -93,6 +100,8 @@ def delete_cart_item(request, product_id, cart_item_id):
     product = Product.objects.get(id=product_id)
     cart_item = CartItem.objects.get(product=product, cart=cart, id=cart_item_id)
     cart_item.delete()
+    messages.success(request, f'{product.product_name} has beem removed.')
+
     return redirect('cart:cart')
 
 
