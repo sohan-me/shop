@@ -88,7 +88,7 @@ def remove_from_cart(request, product_id, cart_item_id):
             messages.success(request, 'Product Quantity Updated.')
         else:
             cart_item.delete()
-            messages.success(request, f'{product.product_name} has beem removed.')
+            messages.success(request, f'{product.product_name} has been removed.')
     except:
         pass
 

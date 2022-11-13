@@ -1,0 +1,10 @@
+{% autoescape off %}
+
+Hi {{user.first_name}},
+
+Please click on below link to active your account.
+http://{{domain}}{% url 'accounts:activate' uidb64=uid token=token %}
+
+If you think it's not you, please ingore this email.
+
+{% endautoescape %}
