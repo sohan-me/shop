@@ -1,0 +1,11 @@
+{% autoescape off %}
+
+Hi {{order.full_name}},
+
+Your order has been received.
+
+Order number: {{order.order_number}}
+Shipping address: {{order.address_line_1}}
+Order Total: {{order.order_total}} USD
+
+{% endautoescape %}
