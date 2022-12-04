@@ -40,7 +40,7 @@ class Account(AbstractBaseUser):
     username = models.CharField(max_length=50, unique=True)
     email = models.EmailField(max_length=100, unique=True)
     phone_number = models.CharField(max_length=20)
-
+    profile_image = models.ImageField(upload_to='photos/user/profile', default='photos/default/default_user.png')
     # required
     date_joined = models.DateTimeField(auto_now_add=True)
     last_login = models.DateTimeField(auto_now_add=True)
@@ -50,7 +50,7 @@ class Account(AbstractBaseUser):
     is_superadmin = models.BooleanField(default=False)
 
     USERNAME_FIELD = 'email'
-    REQUIRED_FIELD = ['username', 'first_name', 'last_name', 'password', 'confirm_password']
+    REQUIRED_FIELD = ['username', 'first_name', 'last_name', 'password', 'confirm_password', 'profile_image']
 
     objects = MyAccountManager()
 
@@ -62,3 +62,6 @@ class Account(AbstractBaseUser):
 
     def has_module_perms(self, add_label):
         return True
+
+    def full_name(self):
+        return f'{self.first_name} {self.last_name}'

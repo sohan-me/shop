@@ -76,24 +76,70 @@
 		
 	</header>
 
-	<article class="box mb-3">
+	<form action="{% url 'store:submit_review' product_details.id %}" method="POST" style="padding: 10px;"> 
+		{% csrf_token %}
+		<h5>Write Your Review </h5>
+		<div style="margin: 10px"> 
+			<!-- Rating Stars-->
+			<label>How do you rate this product? </label>
+			<br>
+			<div class="rate"> 
+				<input type="radio" name="rating" id="rate10" value="5" required> <label for="rate10" title="5"> </label>
+				<input type="radio" name="rating" id="rate9" value="4.5" required><label for="rate9" title="4.5" class="half"> </label>
+				<input type="radio" name="rating" id="rate8" value="4" required><label for="rate8" title="4"> </label>
+				<input type="radio" name="rating" id="rate7" value="3.5" required><label for="rate7" title="3.5" class="half"> </label>
+				<input type="radio" name="rating" id="rate6" value="3" required><label for="rate6" title="3"> </label>
+				<input type="radio" name="rating" id="rate5" value="2.5" required><label for="rate5" title="2.5" class="half"> </label>
+				<input type="radio" name="rating" id="rate4" value="2" required><label for="rate4" title="2"> </label>
+				<input type="radio" name="rating" id="rate3" value="1.5" required><label for="rate3" title="1.5" class="half"> </label>
+				<input type="radio" name="rating" id="rate2" value="1" required><label for="rate2" title="1"> </label>
+				<input type="radio" name="rating" id="rate1" value="0.5" required><label for="rate1" title="0.5" class="half"> </label>
+			</div>
+			<br>
+			Review:
+			<textarea name="review" class="form-control" rows="4"> </textarea>
+			{% include 'includes/alerts.html' %}
+			{% if user.is_authenticated %}
+			{% if orderproduct %}
+			<input type="submit" value="Submit Review" class="btn btn-primary" style="margin-top: 10px;">
+			{% else %}
+			<p>You must purchase this product to make review.</p>
+			{% endif %}
+			{% else %}
+			<p>You must be login in to post a review. <span> <a href="{% url 'accounts:log_in' %}">Login now </a> </span> </p>
+			{% endif %}
+		</div>
+
+	</form>
+
+	{% for review in review %}
+	<article class="box mb-3" style="padding: 5px;">
 		<div class="icontext w-100">
-			<img src="{% static './images/avatars/avatar1.jpg' %}" class="img-xs icon rounded-circle">
+			<img src="{% get_media_prefix %}{{review.user.profile_image}}" class="img-xs icon rounded-circle">
 			<div class="text">
-				<span class="date text-muted float-md-right">24.04.2020 </span>  
-				<h6 class="mb-1">Mike John </h6>
+				<span class="date text-muted float-md-right">{{review.updated_at}} </span>  
+				<h6 class="mb-1">{{review.user.full_name}}</h6>
+				<div class="rating-star">
+					<span>
+
+						<i class="fa fa-star{% if review.rating == 0.5 %}-half-o{% elif review.rating < 1 %}-o {% endif %}" aria-hidden="true"></i>
+						<i class="fa fa-star{% if review.rating == 1.5 %}-half-o{% elif review.rating < 2 %}-o {% endif %}" aria-hidden="true"></i>
+						<i class="fa fa-star{% if review.rating == 2.5 %}-half-o{% elif review.rating < 3 %}-o {% endif %}" aria-hidden="true"></i>
+						<i class="fa fa-star{% if review.rating == 3.5 %}-half-o{% elif review.rating < 4 %}-o {% endif %}" aria-hidden="true"></i>
+						<i class="fa fa-star{% if review.rating == 4.5 %}-half-o{% elif review.rating < 5 %}-o {% endif %}" aria-hidden="true"></i>
+
+					</span> 
+				</div>
 				
 			</div>
 		</div> <!-- icontext.// -->
 		<div class="mt-3">
 			<p>
-				Dummy comment Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
-				tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
-				quis nostrud exercitation ullamco laboris nisi ut aliquip
+				{{review.review}}
 			</p>	
 		</div>
 	</article>
-
+	{% endfor %}
 	
 
 	</div> <!-- col.// -->
