@@ -40,7 +40,6 @@ class Account(AbstractBaseUser):
     username = models.CharField(max_length=50, unique=True)
     email = models.EmailField(max_length=100, unique=True)
     phone_number = models.CharField(max_length=20)
-    profile_image = models.ImageField(upload_to='photos/user/profile', default='photos/default/default_user.png')
     # required
     date_joined = models.DateTimeField(auto_now_add=True)
     last_login = models.DateTimeField(auto_now_add=True)
@@ -50,7 +49,7 @@ class Account(AbstractBaseUser):
     is_superadmin = models.BooleanField(default=False)
 
     USERNAME_FIELD = 'email'
-    REQUIRED_FIELD = ['username', 'first_name', 'last_name', 'password', 'confirm_password', 'profile_image']
+    REQUIRED_FIELD = ['username', 'first_name', 'last_name', 'password', 'confirm_password']
 
     objects = MyAccountManager()
 
@@ -65,3 +64,18 @@ class Account(AbstractBaseUser):
 
     def full_name(self):
         return f'{self.first_name} {self.last_name}'
+
+
+
+class UserProfile(models.Model):
+    
+    user = models.ForeignKey(Account, on_delete=models.CASCADE)
+    address_line_1 = models.CharField(blank=True, max_length=200)
+    address_line_2 = models.CharField(max_length=200, blank=True)
+    profile_image = models.ImageField(blank=True, upload_to='photos/user/profile')
+    city = models.CharField(blank=True, max_length=20)
+    state = models.CharField(blank=True, max_length=20)
+    country = models.CharField(blank=True, max_length=30)
+
+    def __str__(self):
+        return self.user.first_name

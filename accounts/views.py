@@ -1,17 +1,17 @@
-from django.shortcuts import render, redirect
-from .forms import RegistrationForm
-from .models import Account
+from django.shortcuts import render, redirect, get_object_or_404
+from .forms import RegistrationForm, UserForm, UserProfileForm
+from .models import Account, UserProfile
 from django.conf import settings
 from django.contrib import messages, auth
-
-#Django Verification module
+from django.contrib.auth.decorators import login_required
+#Django Verification module 
 from django.contrib.sites.shortcuts import get_current_site
 from django.template.loader import render_to_string
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.utils.encoding import force_bytes
 from django.contrib.auth.tokens import default_token_generator
 from django.core.mail import EmailMessage
-
+from orders.models import Order
 from cart.views import _cart_id
 from cart.models import Cart, CartItem
 import requests
@@ -187,11 +187,81 @@ def activate(request, uidb64, token):
 		return redirect('accounts:register')
 
 
-
+@login_required(login_url='accounts:log_in')
 def dashboard(request):
-	return render(request, 'accounts/dashboard.html')
+	current_user = request.user
+	if request.user.is_authenticated:
+		order = Order.objects.order_by('-created_at').filter(user=request.user, is_ordered=True)
+		order_count = order.count()
+		context = {
+			'order_count':order_count,
+			'current_user':current_user,
+		}	
+	return render(request, 'accounts/dashboard.html', context)
 
 
+def my_orders(request):
+	order = Order.objects.filter(user=request.user, is_ordered=True).order_by('-created_at')
+	context = {'order':order}
+	return render(request, 'accounts/my_orders.html', context)
+
+def edit_profile(request):
+
+	try:
+		userprofile = UserProfile.objects.get(user=request.user)
+	except:
+		userprofile = UserProfile.objects.create(user=request.user)
+	
+	try:
+
+		if request.method == 'POST':
+			userform = UserForm(request.POST, instance=request.user)
+			userprofileform = UserProfileForm(request.POST, request.FILES, instance=userprofile)
+			if userform.is_valid() and userprofileform.is_valid():
+				userform.save()
+				userprofileform.save()
+				messages.success(request, 'Profile information has been updated.')
+				return redirect('accounts:edit_profile') 
+
+		else:
+			userform = UserForm(instance=request.user)
+			userprofileform = UserProfileForm(instance=userprofile)
+	except:
+		pass
+
+	context = {'userform':userform, 'userprofileform':userprofileform, 'userprofile':userprofile}
+
+	return render(request, 'accounts/edit_profile.html', context)
+
+def change_password(request):
+	if request.method == 'POST':
+		print('POST method True')
+		current_password = request.POST['current_password']
+		new_password = request.POST['new_password']
+		confirm_password = request.POST['confirm_password']
+
+		user = Account.objects.get(email__exact=request.user.email)
+
+		if new_password == confirm_password:
+			success = user.check_password(current_password)
+			if success:
+				user.set_password(new_password)
+				user.save()
+				auth.logout(request)
+				messages.success(request, 'Your password has been updated, login to continue!')
+				return redirect('accounts:log_in')
+			else:
+				messages.error(request, 'Your current password does not match.')
+				return redirect('accounts:change_password')
+		else:
+			messages.error(request, 'Password does not match.')
+			return redirect('accounts:change_password')
+
+	else:
+		print('POST method False')
+		return redirect('accounts:dashboard')
+
+	return render(request, 'accounts/change_password.html')
 
 def reset_password(request):
 
@@ -261,7 +331,6 @@ def reset_password_process(request):
 			user.save()
 			messages.success(request, 'Your password has been updated.')
 			return redirect('accounts:log_in')
-			print(uid, user.pk)
 		else:
 			messages.error(request, 'Password does not match.')
 			return redirect('accounts:reset_password')

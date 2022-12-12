@@ -7,7 +7,7 @@ from django.db.models import Q
 from .forms import ReviewRatingForm
 from django.contrib import messages
 from orders.models import OrderProduct
-
+from accounts.models import UserProfile
 # Create your views here!.
 
 
@@ -49,7 +49,6 @@ def product_details(request, category_slug, product_slug):
         orderproduct = None
 
     review = ReviewRating.objects.filter(product_id=product_details.id, status=True)
-
     context = {'product_details': product_details, 'orderproduct':orderproduct, 'review':review}
     return render(request, 'store/product_details.html', context)
 
@@ -66,6 +65,7 @@ def search(request, product=None, product_count=0):
 
 
 def submit_review(request, product_id):
+    
     url = request.META.get('HTTP_REFERER')
     if request.method == "POST":
 
@@ -77,9 +77,8 @@ def submit_review(request, product_id):
             return redirect(url)
         
         except:
-
-           form = ReviewRatingForm(request.POST)
-           if form.is_valid():
+            form = ReviewRatingForm(request.POST)
+            if form.is_valid():
                 data = ReviewRating()
                 data.rating = form.cleaned_data['rating']
                 data.review = form.cleaned_data['review']
