@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
+from django.db.models import Avg,Count
 # Create your models  here.
 
 
@@ -65,6 +66,9 @@ class Account(AbstractBaseUser):
     def full_name(self):
         return f'{self.first_name} {self.last_name}'
 
+    def profile_image(self):
+        userprofile =  UserProfile.objects.get(user=self)
+        return userprofile.profile_image
 
 
 class UserProfile(models.Model):
@@ -72,7 +76,7 @@ class UserProfile(models.Model):
     user = models.ForeignKey(Account, on_delete=models.CASCADE)
     address_line_1 = models.CharField(blank=True, max_length=200)
     address_line_2 = models.CharField(max_length=200, blank=True)
-    profile_image = models.ImageField(blank=True, upload_to='photos/user/profile')
+    profile_image = models.ImageField(upload_to='photos/user/profile', default='photos/default/default_user.png')
     city = models.CharField(blank=True, max_length=20)
     state = models.CharField(blank=True, max_length=20)
     country = models.CharField(blank=True, max_length=30)

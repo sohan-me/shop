@@ -154,7 +154,7 @@ def order_completed(request):
 		order = Order.objects.get(order_number=order_number, is_ordered=True)
 		orderproduct = OrderProduct.objects.filter(order__id=order.id)
 		for i in orderproduct:
-			subtotal = i.product_price * i.quantity
+			subtotal += i.product_price * i.quantity
 		context = {
 			'order':order,
 			'transID':transID,
@@ -167,3 +167,14 @@ def order_completed(request):
 
 	except:
 		return redirect('home')
+
+
+
+def order_details(request, order_id):
+	order = Order.objects.get(order_number=order_id)
+	order_product = OrderProduct.objects.filter(order=order)
+	subtotal = 0
+	for i in order_product:
+		subtotal += i.product_price * i.quantity
+	context = {'order':order, 'order_product':order_product, 'subtotal':subtotal,}
+	return render(request, 'orders/order_details.html', context)

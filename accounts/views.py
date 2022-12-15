@@ -155,7 +155,7 @@ def log_in(request):
 
 	return render(request, 'accounts/login.html')
 
-
+@login_required(login_url='accounts:log_in')
 def log_out(request):
 	if request.user.is_authenticated:
 		auth.logout(request)
@@ -193,25 +193,31 @@ def dashboard(request):
 	if request.user.is_authenticated:
 		order = Order.objects.order_by('-created_at').filter(user=request.user, is_ordered=True)
 		order_count = order.count()
+		
+		#After login it will create userprofile
+		try:
+			userprofile = UserProfile.objects.get(user=request.user)
+		except:
+			userprofile = UserProfile.objects.create(user=request.user)
+	
 		context = {
 			'order_count':order_count,
 			'current_user':current_user,
+			'userprofile': userprofile,
 		}	
 	return render(request, 'accounts/dashboard.html', context)
 
-
+@login_required(login_url='accounts:log_in')
 def my_orders(request):
 	order = Order.objects.filter(user=request.user, is_ordered=True).order_by('-created_at')
 	context = {'order':order}
 	return render(request, 'accounts/my_orders.html', context)
 
+
+@login_required(login_url='accounts:log_in')
 def edit_profile(request):
 
-	try:
-		userprofile = UserProfile.objects.get(user=request.user)
-	except:
-		userprofile = UserProfile.objects.create(user=request.user)
-	
+	userprofile = UserProfile.objects.get(user=request.user)
 	try:
 
 		if request.method == 'POST':
@@ -233,7 +239,10 @@ def edit_profile(request):
 
 	return render(request, 'accounts/edit_profile.html', context)
 
+	
+@login_required(login_url='accounts:log_in')
 def change_password(request):
+	
 	if request.method == 'POST':
 		print('POST method True')
 		current_password = request.POST['current_password']
@@ -257,9 +266,6 @@ def change_password(request):
 			messages.error(request, 'Password does not match.')
 			return redirect('accounts:change_password')
 
-	else:
-		print('POST method False')
-		return redirect('accounts:dashboard')
 
 	return render(request, 'accounts/change_password.html')
 

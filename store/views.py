@@ -1,6 +1,6 @@
 from multiprocessing import context
 from django.shortcuts import render, get_object_or_404, HttpResponse, redirect
-from .models import Product, ReviewRating
+from .models import Product, ReviewRating, ProductImage
 from core.models import Category
 from django.core.paginator import Paginator
 from django.db.models import Q
@@ -49,7 +49,8 @@ def product_details(request, category_slug, product_slug):
         orderproduct = None
 
     review = ReviewRating.objects.filter(product_id=product_details.id, status=True)
-    context = {'product_details': product_details, 'orderproduct':orderproduct, 'review':review}
+    product_gallery = ProductImage.objects.filter(product__id=product_details.id)
+    context = {'product_details': product_details, 'orderproduct':orderproduct, 'review':review, 'product_gallery':product_gallery}
     return render(request, 'store/product_details.html', context)
 
 

@@ -33,6 +33,17 @@
 			<figcaption class="info-wrap">
 				<a href="./product-detail.html" class="title">{{products.product_name}}</a>
 				<div class="price mt-1">${{products.price}}</div> <!-- price-wrap.// -->
+				<div class="rating-star" style="margin-top: -5px; margin-bottom: 10px;">
+				<span>
+					<i class="fa fa-star{% if products.avarage < 0.5 %}-o{% elif products.avarage >= 0.5 and products.avarage < 1 %}-half-o {% endif %}" aria-hidden="true"></i>
+					<i class="fa fa-star{% if products.avarage < 1.5 %}-o{% elif products.avarage >= 1.5 and products.avarage < 2 %}-half-o {% endif %}" aria-hidden="true"></i>
+					<i class="fa fa-star{% if products.avarage < 2.5 %}-o{% elif products.avarage >= 2.5 and products.avarage < 3 %}-half-o {% endif %}" aria-hidden="true"></i>
+					<i class="fa fa-star{% if products.avarage < 3.5 %}-o{% elif products.avarage >= 3.5 and products.avarage < 4 %}-half-o {% endif %}" aria-hidden="true"></i>
+					<i class="fa fa-star{% if products.avarage < 4.5 %}-o{% elif products.avarage >= 4.5 and products.avarage < 5 %}-half-o {% endif %}" aria-hidden="true"></i>
+				</span> 
+	
+				</div>
+
 			</figcaption>
 		</div>
 	</div> <!-- col.// -->
