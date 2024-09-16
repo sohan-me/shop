@@ -1,7 +1,7 @@
 asgiref==3.7.2
 certifi==2023.11.17
 charset-normalizer==3.3.2
-Django==5.0.1
+Django==5.0.8
 django-admin-thumbnails==0.2.8
 django-session-timeout==0.1.0
 idna==3.6
